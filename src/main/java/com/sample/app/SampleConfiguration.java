@@ -10,6 +10,14 @@ import javax.validation.constraints.*;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 
 public class SampleConfiguration extends Configuration {
+
+    @NotEmpty
+    private String message;
+
+    public String getMessage() {
+        return message;
+    }
+
     @Valid
     @JsonProperty("swagger")
     private SwaggerBundleConfiguration swaggerBundleConfiguration;

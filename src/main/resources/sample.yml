@@ -1,3 +1,5 @@
+message: "hello there"
+
 server:
   rootPath: /api
   applicationConnectors:

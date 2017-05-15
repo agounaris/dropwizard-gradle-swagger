@@ -1,5 +1,7 @@
 package com.sample.app;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import com.sample.app.resources.SampleResource;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
@@ -18,11 +20,6 @@ public class SampleApplication extends Application<SampleConfiguration> {
         return "sample-app";
     }
 
-    @Override
-    public void initialize(final Bootstrap<SampleConfiguration> bootstrap) {
-        bootstrap.addBundle(swaggerBundle);
-    }
-
     private final SwaggerBundle<SampleConfiguration> swaggerBundle = new SwaggerBundle<SampleConfiguration>() {
         @Override
         protected SwaggerBundleConfiguration getSwaggerBundleConfiguration(SampleConfiguration configuration) {
@@ -31,9 +28,15 @@ public class SampleApplication extends Application<SampleConfiguration> {
     };
 
     @Override
+    public void initialize(final Bootstrap<SampleConfiguration> bootstrap) {
+        bootstrap.addBundle(swaggerBundle);
+    }
+
+    @Override
     public void run(final SampleConfiguration configuration,
                     final Environment environment) {
-        environment.jersey().register(new SampleResource());
+        Injector injector = Guice.createInjector();
+        environment.jersey().register(injector.getInstance(SampleResource.class));
     }
 
 }
