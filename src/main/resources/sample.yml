@@ -1,0 +1,18 @@
+server:
+  rootPath: /api
+  applicationConnectors:
+  - type: http
+    port: 8080
+  adminConnectors:
+  - type: http
+    port: 8081
+  maxThreads: 1024
+  minThreads: 1
+  maxQueuedRequests: 10
+  idleThreadTimeout: 5 minutes
+  shutdownGracePeriod: 30 seconds
+
+swagger:
+  title: Sample app
+  description: Sample app
+  resourcePackage: com.sample.app.resources

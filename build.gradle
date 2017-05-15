@@ -1,0 +1,97 @@
+apply plugin: "java"
+apply plugin: "idea"
+apply plugin: "application"
+//apply plugin: "jacoco"
+apply plugin: "checkstyle"
+apply plugin: "application"
+apply plugin: "findbugs"
+apply plugin: "gradle-one-jar"
+
+// Use Java 8 by default
+sourceCompatibility = "1.8"
+targetCompatibility = "1.8"
+
+// UTF-8 should be standard by now. So use it!
+[compileJava, compileTestJava]*.options*.encoding = "UTF-8"
+
+// The main class of the application
+mainClassName = 'com.sample.app.SampleApplication'
+def configDirectory = "$rootProject.projectDir/src/main/resources"
+
+//def configFile = configDirectory + "/sample.yaml"
+// you can run the app with the definitions as parameter like, gradle run -PconfigFile=/Users/user/definitions.yaml
+ext.configFile = project.hasProperty('configFile') ? project.getProperty('configFile') : configDirectory + "/sample.yml"
+
+// Add Gradle OneJar Plugin, see https://github.com/rholder/gradle-one-jar
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "com.github.rholder:gradle-one-jar:1.0.3"
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile(
+        "io.dropwizard:dropwizard-core:" + dropwizardVersion,
+        "io.dropwizard:dropwizard-hibernate:" + dropwizardVersion,
+        "io.dropwizard:dropwizard-migrations:" + dropwizardVersion,
+        "io.dropwizard:dropwizard-client:" + dropwizardVersion,
+        "com.smoketurner:dropwizard-swagger:" + dropwizardSwaggerVersion,
+        "com.google.inject:guice:" + guiceVersion,
+        "net.sf.dozer:dozer:" + dozerVersion,
+        "com.h2database:h2:" + h2Version,
+        "mysql:mysql-connector-java:" + mysqlConnectorVersion,
+    )
+    testCompile (
+        "io.dropwizard:dropwizard-testing:" + dropwizardVersion
+    )
+}
+
+// Configure the oneJar task
+task oneJar(type: OneJar) {
+    mainClass = mainClassName
+}
+
+checkstyle {
+    toolVersion "7.1.2"
+}
+
+// Configure the run task to start the Dropwizard service
+run {
+    args 'server', './src/main/resources/sample.yml'
+
+}
+
+//jacocoTestReport {
+//    group = "Reporting"
+//    reports {
+//        xml.enabled true
+//        csv.enabled false
+//        html.destination "${buildDir}/reports/coverage"
+//    }
+//}
+
+// Configure FindBugs and tell it what to produce
+tasks.withType(FindBugs) {
+    reports {
+        xml.enabled true
+        html.enabled false
+        ignoreFailures = true
+        //html.stylesheet resources.text.fromFile("config/xsl/findbugs-custom.xsl")
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.4'
+}
+
+artifacts {
+    oneJar
+}
