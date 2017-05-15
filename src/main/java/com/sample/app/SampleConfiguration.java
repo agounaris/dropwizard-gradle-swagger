@@ -17,8 +17,4 @@ public class SampleConfiguration extends Configuration {
     public SwaggerBundleConfiguration getSwaggerBundleConfiguration() {
         return swaggerBundleConfiguration;
     }
-
-    public void setSwaggerBundleConfiguration(SwaggerBundleConfiguration swaggerBundleConfiguration) {
-        this.swaggerBundleConfiguration = swaggerBundleConfiguration;
-    }
 }

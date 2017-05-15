@@ -1,5 +1,6 @@
 package com.sample.app;
 
+import com.sample.app.resources.SampleResource;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
@@ -32,7 +33,7 @@ public class SampleApplication extends Application<SampleConfiguration> {
     @Override
     public void run(final SampleConfiguration configuration,
                     final Environment environment) {
-        // TODO: implement application
+        environment.jersey().register(new SampleResource());
     }
 
 }
