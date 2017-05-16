@@ -64,4 +64,12 @@ public class Post {
     public void setContent(String content) {
         this.content = content;
     }
+
+    public void setCreated(Date created) {
+        this.created = created;
+    }
+
+    public void setModified(Date modified) {
+        this.modified = modified;
+    }
 }

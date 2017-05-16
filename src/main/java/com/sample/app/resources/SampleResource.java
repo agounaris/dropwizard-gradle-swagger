@@ -1,19 +1,27 @@
 package com.sample.app.resources;
 
 
+import com.codahale.metrics.annotation.Timed;
 import com.google.inject.Inject;
 import com.sample.app.SampleConfiguration;
+import com.sample.app.api.PostDto;
+import com.sample.app.core.Post;
+import com.sample.app.dao.PostDao;
+import io.dropwizard.hibernate.UnitOfWork;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.annotation.Resource;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.Date;
 
 /**
  * Author
@@ -27,9 +35,13 @@ public class SampleResource {
 
     private final SampleConfiguration configuration;
 
+    @Resource
+    private PostDao postDao;
+
     @Inject
-    public SampleResource(SampleConfiguration configuration) {
+    public SampleResource(SampleConfiguration configuration, PostDao postDao) {
         this.configuration = configuration;
+        this.postDao = postDao;
     }
 
     @GET
@@ -45,5 +57,30 @@ public class SampleResource {
     public Response getFromConfig() {
         logger.error("AN ERROR MESSAGE");
         return Response.ok(this.configuration.getMessage()).build();
+    }
+
+    @POST
+    @Path("/post")
+    @ApiOperation("Creates a post")
+    @Timed
+    @UnitOfWork
+    public Response createPost(@HeaderParam("X-Transaction-Id") String transactionId,
+                               @ApiParam(value = "The asn to be created", required = true) @NotNull @Valid PostDto postDto) {
+        Post post = new Post();
+        post.setContent(postDto.getContent());
+        post.setType(postDto.getType());
+        post.setCreated(new Date());
+        post.setModified(new Date());
+        post = postDao.create(post);
+
+        return Response.ok(post).build();
+    }
+
+    @GET
+    @Path("/post")
+    @ApiOperation("Gets all posts")
+    @UnitOfWork
+    public Response getAllPosts() {
+        return Response.ok(postDao.findAll()).build();
     }
 }

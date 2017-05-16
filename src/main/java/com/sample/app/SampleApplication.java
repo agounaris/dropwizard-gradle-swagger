@@ -3,7 +3,9 @@ package com.sample.app;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Singleton;
 import com.sample.app.core.Post;
+import com.sample.app.dao.PostDao;
 import com.sample.app.resources.SampleResource;
 import io.dropwizard.Application;
 import io.dropwizard.db.DataSourceFactory;
@@ -74,6 +76,7 @@ public class SampleApplication extends Application<SampleConfiguration> {
             protected void configure() {
                 // bind(MultiPartFeature.class).in(Singleton.class);
                 bind(SessionFactory.class).toInstance(hibernateBundle.getSessionFactory());
+                bind(PostDao.class).in(Singleton.class);
             }
         });
     }
