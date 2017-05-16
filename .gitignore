@@ -26,3 +26,6 @@ logs/
 #Ignore h2 DB files
 .h2/
 /.nb-gradle/
+/nbproject/private/
+
+.gradle/

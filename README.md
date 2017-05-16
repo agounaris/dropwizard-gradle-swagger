@@ -13,3 +13,8 @@ Health Check
 ---
 
 To see your applications health enter url `http://localhost:8081/healthcheck`
+
+
+create database sample;
+CREATE USER 'sample'@'localhost' IDENTIFIED BY 'sample';
+GRANT ALL PRIVILEGES ON * . * TO 'sample'@'localhost';

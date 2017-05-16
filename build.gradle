@@ -1,3 +1,5 @@
+version '1.0-SNAPSHOT'
+
 apply plugin: "java"
 apply plugin: "idea"
 apply plugin: "application"
@@ -5,7 +7,8 @@ apply plugin: "application"
 apply plugin: "checkstyle"
 apply plugin: "application"
 apply plugin: "findbugs"
-apply plugin: "gradle-one-jar"
+apply plugin: "com.github.johnrengelman.shadow"
+
 
 // Use Java 8 by default
 sourceCompatibility = "1.8"
@@ -26,10 +29,12 @@ ext.configFile = project.hasProperty('configFile') ? project.getProperty('config
 buildscript {
     repositories {
         mavenCentral()
+        jcenter()
     }
 
     dependencies {
         classpath "com.github.rholder:gradle-one-jar:1.0.3"
+        classpath 'com.github.jengelman.gradle.plugins:shadow:2.0.0'
     }
 }
 
@@ -52,11 +57,6 @@ dependencies {
     testCompile (
         "io.dropwizard:dropwizard-testing:" + dropwizardVersion
     )
-}
-
-// Configure the oneJar task
-task oneJar(type: OneJar) {
-    mainClass = mainClassName
 }
 
 checkstyle {
@@ -89,9 +89,13 @@ tasks.withType(FindBugs) {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.4'
+    gradleVersion = '3.5'
 }
 
-artifacts {
-    oneJar
+shadowJar {
+    mergeServiceFiles()
+    manifest {
+        attributes("Main-Class": mainClassName )
+    }
+    archiveName = "${baseName}-${version}.${extension}"
 }
