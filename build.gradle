@@ -99,3 +99,10 @@ shadowJar {
     }
     archiveName = "${baseName}-${version}.${extension}"
 }
+
+//Tests to run and skip
+test {
+    includes ['com/sample/app/**']
+    ignoreFailures = true
+    //excludes []
+}

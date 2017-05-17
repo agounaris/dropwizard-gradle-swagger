@@ -23,9 +23,9 @@ import javax.annotation.Resource;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.core.*;
 import java.util.Date;
+import java.util.Optional;
 
 /**
  * Author
@@ -71,6 +71,7 @@ public class SampleResource {
     @UnitOfWork
     public Response createPost(@HeaderParam("X-Transaction-Id") String transactionId,
                                @ApiParam(value = "The post to be created", required = true) @NotNull @Valid PostDto postDto,
+                               @Context UriInfo uriInfo,
                                @Auth User user) {
         Post post = new Post();
         post.setContent(postDto.getContent());
@@ -79,7 +80,10 @@ public class SampleResource {
         post.setModified(new Date());
         post = postDao.create(post);
 
-        return Response.ok(post).build();
+        UriBuilder builder = uriInfo.getAbsolutePathBuilder();
+        builder.path(Long.toString(post.getId()));
+
+        return Response.created(builder.build()).build();
     }
 
     @GET

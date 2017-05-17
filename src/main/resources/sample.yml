@@ -17,10 +17,25 @@ users:
     roles:
       - "view"
 
+# Logging settings.
 logging:
+  # The default level of all loggers. Can be OFF, ERROR, WARN, INFO, DEBUG, TRACE, or ALL.
   level: INFO
+  # Logger-specific levels.
   loggers:
+    #Overriding application log level
     com.sample: DEBUG
+    # Enables the SQL query log and redirect it to a separate file
+    "org.hibernate.SQL":
+      level: DEBUG
+  appenders:
+    - type: console
+      threshold: INFO
+      target: stderr
+    - type: file
+      currentLogFilename: ./logs/sample.log
+      archivedLogFilenamePattern: ./logs/sample-%d.log.gz
+      archivedFileCount: 5
 
 server:
   rootPath: /api

@@ -1,0 +1,62 @@
+appId: sample-api
+appName: sample
+appVersion: 0.1.0
+
+message: "hello there"
+
+# Authentication/Authorization
+users:
+  - name: "admin"
+    password: "admin"
+    roles:
+      - "read"
+      - "write"
+      - "delete"
+  - name: "user"
+    password: "user"
+    roles:
+      - "view"
+
+logging:
+  level: INFO
+  loggers:
+    com.sample: DEBUG
+
+server:
+  rootPath: /api
+  applicationConnectors:
+  - type: http
+    port: 8080
+  adminConnectors:
+  - type: http
+    port: 8081
+  maxThreads: 1024
+  minThreads: 1
+  maxQueuedRequests: 10
+  idleThreadTimeout: 5 minutes
+  shutdownGracePeriod: 30 seconds
+
+swagger:
+  title: Sample app
+  description: Sample app
+  resourcePackage: com.sample.app.resources
+
+database:
+  driverClass: org.h2.Driver
+  url: jdbc:h2:mem:sampleservicetest
+  user: sa
+  password:
+
+  properties:
+    charSet: UTF-8
+    hibernate.dialect: org.hibernate.dialect.MySQLDialect
+    hibernate.hbm2ddl.auto: create
+    hibernate.show_sql: true
+
+  maxWaitForConnection: 100s
+  validationQuery: "/* MyService Health Check */ SELECT 1 FROM DUAL"
+  minSize: 5
+  maxSize: 10
+  checkConnectionWhileIdle: true
+  minIdleTime: 60s
+  evictionInterval: 60s

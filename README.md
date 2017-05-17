@@ -20,9 +20,10 @@ Prepare the db
 Features
 ---
 
-* Standalone jar: gradle shadowJar
+* Standalone jar: `gradle shadowJar`
 * Hibernate 
 * Migrations
-* Simple authentication/authorization: admin,admin for write, read, delete and user,user for read only
+* Simple authentication/authorization: `admin,admin` for write, read, delete and `user,user` for read only
 * Healthcheck: To see your applications health enter url `http://localhost:8081/healthcheck`
 * Filter user actions to log file
+* Api and integration junit tests: `gradle test`
