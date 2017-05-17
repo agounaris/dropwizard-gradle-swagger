@@ -4,10 +4,16 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
+import com.sample.app.auth.ApiAuthenticator;
+import com.sample.app.auth.ApiAuthorizer;
+import com.sample.app.auth.User;
 import com.sample.app.core.Post;
 import com.sample.app.dao.PostDao;
 import com.sample.app.resources.SampleResource;
 import io.dropwizard.Application;
+import io.dropwizard.auth.AuthDynamicFeature;
+import io.dropwizard.auth.AuthValueFactoryProvider;
+import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.db.PooledDataSourceFactory;
 import io.dropwizard.hibernate.HibernateBundle;
@@ -16,6 +22,7 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.federecio.dropwizard.swagger.SwaggerBundle;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
+import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.hibernate.SessionFactory;
 
 
@@ -66,7 +73,15 @@ public class SampleApplication extends Application<SampleConfiguration> {
     @Override
     public void run(SampleConfiguration configuration,
                     Environment environment) {
+        environment.jersey()
+                .register(new AuthDynamicFeature(
+                        new BasicCredentialAuthFilter.Builder<User>().setAuthenticator(new ApiAuthenticator(configuration.getUsers()))
+                                .setAuthorizer(new ApiAuthorizer()).setRealm("PROTECTED").buildAuthFilter()));
+
         Injector injector = createInjector(configuration);
+
+        environment.jersey().register(new AuthValueFactoryProvider.Binder<>(User.class));
+        environment.jersey().register(injector.getInstance(RolesAllowedDynamicFeature.class));
         environment.jersey().register(injector.getInstance(SampleResource.class));
     }
 
@@ -74,7 +89,6 @@ public class SampleApplication extends Application<SampleConfiguration> {
         return Guice.createInjector(new AbstractModule() {
             @Override
             protected void configure() {
-                // bind(MultiPartFeature.class).in(Singleton.class);
                 bind(SessionFactory.class).toInstance(hibernateBundle.getSessionFactory());
                 bind(PostDao.class).in(Singleton.class);
             }

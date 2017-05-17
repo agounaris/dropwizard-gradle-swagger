@@ -2,11 +2,16 @@ package com.sample.app.resources;
 
 
 import com.codahale.metrics.annotation.Timed;
+
+import javax.annotation.security.RolesAllowed;
+
 import com.google.inject.Inject;
 import com.sample.app.SampleConfiguration;
 import com.sample.app.api.PostDto;
+import com.sample.app.auth.User;
 import com.sample.app.core.Post;
 import com.sample.app.dao.PostDao;
+import io.dropwizard.auth.Auth;
 import io.dropwizard.hibernate.UnitOfWork;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -18,7 +23,6 @@ import javax.annotation.Resource;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Date;
@@ -61,11 +65,13 @@ public class SampleResource {
 
     @POST
     @Path("/post")
+    @RolesAllowed({"write"})
     @ApiOperation("Creates a post")
     @Timed
     @UnitOfWork
     public Response createPost(@HeaderParam("X-Transaction-Id") String transactionId,
-                               @ApiParam(value = "The asn to be created", required = true) @NotNull @Valid PostDto postDto) {
+                               @ApiParam(value = "The post to be created", required = true) @NotNull @Valid PostDto postDto,
+                               @Auth User user) {
         Post post = new Post();
         post.setContent(postDto.getContent());
         post.setType(postDto.getType());
@@ -78,9 +84,20 @@ public class SampleResource {
 
     @GET
     @Path("/post")
+    @RolesAllowed({"read"})
     @ApiOperation("Gets all posts")
     @UnitOfWork
-    public Response getAllPosts() {
+    public Response getAllPosts(@Auth User user) {
         return Response.ok(postDao.findAll()).build();
+    }
+
+    @GET
+    @Path("/post/{id}")
+    @RolesAllowed({"read"})
+    @ApiOperation("Gets a single post")
+    @UnitOfWork
+    public Response getAllPosts(@ApiParam(value = "The asn to be created", required = true) @NotNull @Valid long id,
+                                @Auth User user) {
+        return Response.ok(postDao.findById(id)).build();
     }
 }

@@ -1,5 +1,18 @@
 message: "hello there"
 
+# Authentication/Authorization
+users:
+  - name: "admin"
+    password: "admin"
+    roles:
+      - "read"
+      - "write"
+      - "delete"
+  - name: "user"
+    password: "user"
+    roles:
+      - "view"
+
 logging:
   level: INFO
   loggers:
@@ -24,47 +37,32 @@ swagger:
   description: Sample app
   resourcePackage: com.sample.app.resources
 
-
 database:
   # the name of your JDBC driver
   driverClass: com.mysql.cj.jdbc.Driver
-
   # the username
   user: sample
-
   # the password
   password: sample
-
   # the JDBC URL - add nullName so liquibase doesnt throw null col name error
   url: jdbc:mysql://127.0.0.1:3306/sample?nullNamePatternMatchesAll=true
-
   # any properties specific to your JDBC driver:
   properties:
     charSet: UTF-8
     hibernate.dialect: org.hibernate.dialect.MySQLDialect
     hibernate.hbm2ddl.auto: validate
     hibernate.show_sql: false
-
   # the maximum amount of time to wait on an empty pool before throwing an exception
   maxWaitForConnection: 100s
-
   # the SQL query to run when validating a connection's liveness
   validationQuery: "/* MyService Health Check */ SELECT 1 FROM DUAL"
-
-  # set the initial size of the pool
-  initialSize: 5
-
   # the minimum number of connections to keep open
   minSize: 5
-
   # the maximum number of connections to keep open
   maxSize: 10
-
   # whether or not idle connections should be validated
   checkConnectionWhileIdle: true
-
   # how long a connection must be held before it can be validated
   minIdleTime: 60s
-
   # the maximum lifetime of an idle connection
   evictionInterval: 60s
