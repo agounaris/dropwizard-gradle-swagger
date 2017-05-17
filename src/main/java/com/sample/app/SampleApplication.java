@@ -9,6 +9,7 @@ import com.sample.app.auth.ApiAuthorizer;
 import com.sample.app.auth.User;
 import com.sample.app.core.Post;
 import com.sample.app.dao.PostDao;
+import com.sample.app.health.WebApiCheck;
 import com.sample.app.resources.SampleResource;
 import io.dropwizard.Application;
 import io.dropwizard.auth.AuthDynamicFeature;
@@ -77,6 +78,10 @@ public class SampleApplication extends Application<SampleConfiguration> {
                 .register(new AuthDynamicFeature(
                         new BasicCredentialAuthFilter.Builder<User>().setAuthenticator(new ApiAuthenticator(configuration.getUsers()))
                                 .setAuthorizer(new ApiAuthorizer()).setRealm("PROTECTED").buildAuthFilter()));
+
+        final WebApiCheck healthCheck = new WebApiCheck(configuration.getAppVersion());
+        environment.healthChecks().register("template", healthCheck);
+        environment.jersey().register(healthCheck);
 
         Injector injector = createInjector(configuration);
 

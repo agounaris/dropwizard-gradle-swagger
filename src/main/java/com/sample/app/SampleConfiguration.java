@@ -16,6 +16,18 @@ import java.util.List;
 public class SampleConfiguration extends Configuration {
 
     @NotEmpty
+    @JsonProperty
+    private String appId;
+
+    @NotEmpty
+    @JsonProperty
+    private String appName;
+
+    @NotEmpty
+    @JsonProperty
+    private String appVersion;
+
+    @NotEmpty
     private String message;
 
     public String getMessage() {
@@ -45,5 +57,17 @@ public class SampleConfiguration extends Configuration {
 
     public List<UserConfiguration> getUsers() {
         return users;
+    }
+
+    public String getAppId() {
+        return appId;
+    }
+
+    public String getAppName() {
+        return appName;
+    }
+
+    public String getAppVersion() {
+        return appVersion;
     }
 }

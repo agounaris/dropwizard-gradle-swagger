@@ -1,3 +1,7 @@
+appId: sample-api
+appName: sample
+appVersion: 0.1.0
+
 message: "hello there"
 
 # Authentication/Authorization
