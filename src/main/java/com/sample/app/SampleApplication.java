@@ -9,6 +9,7 @@ import com.sample.app.auth.ApiAuthorizer;
 import com.sample.app.auth.User;
 import com.sample.app.core.Post;
 import com.sample.app.dao.PostDao;
+import com.sample.app.filter.LogUserActionFilter;
 import com.sample.app.health.WebApiCheck;
 import com.sample.app.resources.SampleResource;
 import io.dropwizard.Application;
@@ -88,6 +89,7 @@ public class SampleApplication extends Application<SampleConfiguration> {
         environment.jersey().register(new AuthValueFactoryProvider.Binder<>(User.class));
         environment.jersey().register(injector.getInstance(RolesAllowedDynamicFeature.class));
         environment.jersey().register(injector.getInstance(SampleResource.class));
+        environment.jersey().register(injector.getInstance(LogUserActionFilter.class));
     }
 
     private Injector createInjector(final SampleConfiguration configuration) {
